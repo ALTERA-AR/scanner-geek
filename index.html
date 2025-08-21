@@ -1,0 +1,183 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+
+  <!--Foto-->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #btnFoto {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      z-index: 10;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  
+
+
+  <a-scene mindar-image="imageTargetSrc:src/traks/targets.mind;  missTolerance: 15" vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+    <a-assets>
+      <a-asset-item id="Animacion0" src="src/models/DEER.glb"></a-asset-item>
+      <a-asset-item id="Animacion1" src="src/models/Dog.glb"></a-asset-item>
+      <a-asset-item id="Animacion2" src="src/models/otter.glb"></a-asset-item>
+      <a-asset-item id="Animacion3" src="src/models/halo.glb"></a-asset-item>
+      <a-asset-item id="Animacion4" src="src/models/gears.glb"></a-asset-item>
+      <a-asset-item id="Animacion5" src="src/models/luffy.glb"></a-asset-item>
+      <a-asset-item id="Animacion6" src="src/models/StarWars.glb"></a-asset-item>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+<a-entity mindar-image-target="targetIndex: 0">
+  <a-gltf-model id="miModelo" rotation="180 0 180" position="0 0 -10" scale="0.1 0.1 0.1" animation-mixer>
+  </a-gltf-model>
+</a-entity>
+
+<script>
+  const modelo = document.querySelector("#miModelo");
+
+  modelo.addEventListener("model-loaded", () => {
+  });
+
+  const animaciones = ["#Animacion0", "#Animacion1", "#Animacion2"];
+  const randomAnim = animaciones[Math.floor(Math.random() * animaciones.length)];
+
+  modelo.setAttribute('gltf-model', randomAnim);
+</script>
+
+
+
+    <a-entity mindar-image-target="targetIndex: 1">
+      <a-gltf-model rotation="0 0 0" position="0 -3.8 0" scale="3 3 3" src="#Animacion3" animation-mixer>
+      </a-gltf-model>
+    </a-entity>
+
+    <a-entity id="anchor2" mindar-image-target="targetIndex: 2">
+      <a-gltf-model id="modelo-temp" src="#Animacion4" rotation="0 0 0" position="0 -5 0" scale="4 4 4"
+        animation-mixer> </a-gltf-model>
+    </a-entity>
+
+    <a-entity id="anchor3" mindar-image-target="targetIndex: 3">
+      <a-gltf-model id="modelo-temp" src="#Animacion5" rotation="0 0 0" position="0 -.5 0" scale="1 1 1"
+        animation-mixer> </a-gltf-model>
+    </a-entity>
+
+    <a-entity id="anchor2" mindar-image-target="targetIndex: 4">
+      <a-gltf-model id="modelo-temp" src="#Animacion6" rotation="0 90 0" position="0 -.5 0" scale="0.5 0.5 0.5"
+        animation-mixer> </a-gltf-model>
+    </a-entity>
+
+
+
+    
+    </a-entity>
+<!-- Botón para capturar 
+      <button id="btnFoto">Tomar foto</button>-->
+
+
+    <!-- contenedor para el modelo liberado -->
+    <a-entity id="modelo-libre" visible="false"></a-entity>
+  </a-scene>
+
+  <!-- Script para liberar el modelo -->
+  <script>
+    AFRAME.registerComponent('liberar-modelo', {
+      init: function () {
+        const anchor = document.querySelector('#anchor2');
+        const modeloTemp = document.querySelector('#modelo-temp');
+        const modeloLibre = document.querySelector('#modelo-libre');
+
+        anchor.addEventListener('targetFound', () => {
+          if (modeloLibre.hasChildNodes()) return; // Evita múltiples clones
+
+          const nuevoModelo = modeloTemp.cloneNode(true);
+          nuevoModelo.setAttribute('position', '0 0 -1'); // frente a la cámara
+          nuevoModelo.setAttribute('scale', '0.09 0.09 0.09');
+          nuevoModelo.setAttribute('animation-mixer', '');
+
+          modeloLibre.appendChild(nuevoModelo);
+          modeloLibre.setAttribute('visible', 'true');
+          anchor.setAttribute('visible', 'false');
+        });
+      }
+    });
+
+    // Activa el componente
+    document.querySelector('a-scene').setAttribute('liberar-modelo', '');
+  </script>
+
+
+  <!-- Script para capturar pantalla visible -->
+
+
+<script>
+const btn = document.getElementById("btnFoto");
+const scene = document.querySelector("a-scene");
+
+// Esperamos a que todos los modelos estén cargados
+scene.addEventListener("renderstart", () => {
+  console.log("Escena lista");
+
+  btn.addEventListener("click", () => {
+    // Obtenemos todos los canvas de la página
+    const canvases = document.querySelectorAll("canvas");
+
+    if (canvases.length === 0) {
+      console.error("No se encontró canvas para capturar");
+      return;
+    }
+
+    // Generalmente el último canvas es el de la escena 3D de MindAR
+    const canvas = canvases[canvases.length - 1];
+
+    // Convertimos a imagen
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "captura.png";
+      a.click();
+    });
+  });
+});
+</script>
+
+
+  <!--sonido anchor 3-->
+  <script>
+    const anchor = document.querySelector('#anchor3');
+    const audio = document.querySelector('#audioRA');
+
+    anchor.addEventListener('targetFound', () => audio.play());
+    anchor.addEventListener('targetLost', () => {
+      audio.pause();
+      audio.currentTime = 6;
+    });
+  </script>
+
+  -------------
+
+</body>
+
+</html>
