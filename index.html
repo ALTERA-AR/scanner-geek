@@ -14,7 +14,7 @@
       overflow: hidden;
     }
 
-    #btnFoto {
+    #boton-foto {
       position: fixed;
       bottom: 20px;
       left: 50%;
@@ -32,7 +32,8 @@
 </head>
 
 <body>
-  
+  <!-- Botón para capturar -->
+  <button id="boton-foto">.</button>
 
 
   <a-scene mindar-image="imageTargetSrc:src/traks/targets.mind;  missTolerance: 15" vr-mode-ui="enabled: false"
@@ -49,37 +50,10 @@
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-<a-entity id="anchor" mindar-image-target="targetIndex: 0">
-
-    <!-- Los 3 modelos (por defecto ocultos) -->
-    <a-gltf-model id="modelo1" src="#Animacion0"  rotation="0 -90 0" position="0 0 0" scale="0.5 0.5 0.5" visible="false"  animation-mixer></a-gltf-model>
-    <a-gltf-model id="modelo2" src="#Animacion0"  rotation="0 0 0" position="0 0 0" scale="0.5 0.5 0.5" visible="false"  animation-mixer></a-gltf-model>
-    <a-gltf-model id="modelo3" src="#Animacion0"  rotation="0 0 0" position="0 0 0" scale="0.5 0.5 0.5" visible="false"  animation-mixer></a-gltf-model>
-  </a-entity>
-
-
-<script>
-  const anchor = document.querySelector("#anchor");
-  const modelos = [
-    document.querySelector("#modelo1"),
-    document.querySelector("#modelo2"),
-    document.querySelector("#modelo3")
-  ];
-
-  anchor.addEventListener("targetFound", () => {
-    // Ocultar todos
-    modelos.forEach(m => m.setAttribute("visible", "false"));
-
-    // Elegir aleatorio
-    const randomIndex = Math.floor(Math.random() * modelos.length);
-    modelos[randomIndex].setAttribute("visible", "true");
-  });
-
-  anchor.addEventListener("targetLost", () => {
-    modelos.forEach(m => m.setAttribute("visible", "false"));
-  });
-</script>
-
+<a-entity mindar-image-target="targetIndex: 0">
+      <a-gltf-model rotation="180 0 180" position="0 0.3 0" scale="0.7 0.7 0.7" src="#Animacion0" animation-mixer>
+      </a-gltf-model>
+    </a-entity>
 
     <a-entity mindar-image-target="targetIndex: 1">
       <a-gltf-model rotation="0 0 0" position="0 -3.8 0" scale="3 3 3" src="#Animacion3" animation-mixer>
@@ -105,82 +79,9 @@
 
     
     </a-entity>
-<!-- Botón para capturar 
-      <button id="btnFoto">Tomar foto</button>-->
-
-
-    <!-- contenedor para el modelo liberado -->
-    <a-entity id="modelo-libre" visible="false"></a-entity>
-  </a-scene>
-
-  <!-- Script para liberar el modelo -->
-  <script>
-    AFRAME.registerComponent('liberar-modelo', {
-      init: function () {
-        const anchor = document.querySelector('#anchor2');
-        const modeloTemp = document.querySelector('#modelo-temp');
-        const modeloLibre = document.querySelector('#modelo-libre');
-
-        anchor.addEventListener('targetFound', () => {
-          if (modeloLibre.hasChildNodes()) return; // Evita múltiples clones
-
-          const nuevoModelo = modeloTemp.cloneNode(true);
-          nuevoModelo.setAttribute('position', '0 0 -1'); // frente a la cámara
-          nuevoModelo.setAttribute('scale', '0.09 0.09 0.09');
-          nuevoModelo.setAttribute('animation-mixer', '');
-
-          modeloLibre.appendChild(nuevoModelo);
-          modeloLibre.setAttribute('visible', 'true');
-          anchor.setAttribute('visible', 'false');
-        });
-      }
-    });
-
-    // Activa el componente
-    document.querySelector('a-scene').setAttribute('liberar-modelo', '');
-  </script>
-
-
-  <!-- Script para capturar pantalla visible -->
-
-
-<script>
-const btn = document.getElementById("btnFoto");
-const scene = document.querySelector("a-scene");
-
-// Esperamos a que todos los modelos estén cargados
-scene.addEventListener("renderstart", () => {
-  console.log("Escena lista");
-
-  btn.addEventListener("click", () => {
-    // Obtenemos todos los canvas de la página
-    const canvases = document.querySelectorAll("canvas");
-
-    if (canvases.length === 0) {
-      console.error("No se encontró canvas para capturar");
-      return;
-    }
-
-    // Generalmente el último canvas es el de la escena 3D de MindAR
-    const canvas = canvases[canvases.length - 1];
-
-    // Convertimos a imagen
-    canvas.toBlob(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "captura.png";
-      a.click();
-    });
-  });
-});
-</script>
-
-
 
   -------------
 
 </body>
 
 </html>
-
