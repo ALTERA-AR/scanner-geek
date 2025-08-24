@@ -50,10 +50,14 @@
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-<a-entity mindar-image-target="targetIndex: 0">
-      <a-gltf-model rotation="0 0 0" position="0 0 0" scale="0.7 0.7 0.7" src="#Animacion0" animation-mixer>
-      </a-gltf-model>
-    </a-entity>
+ <!-- Anchor donde aparecen los modelos -->
+       <a-entity id="anchor" mindar-image-target="targetIndex: 0">
+
+    <!-- Los 3 modelos (por defecto ocultos) -->
+    <a-gltf-model id="modelo1" src="#Animacion0" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+    <a-gltf-model id="modelo2" src="#Animacion1" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+    <a-gltf-model id="modelo3" src="#Animacion2" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+  </a-entity>
 
     <a-entity mindar-image-target="targetIndex: 1">
       <a-gltf-model rotation="0 0 0" position="0 -3.8 0" scale="3 3 3" src="#Animacion3" animation-mixer>
@@ -80,12 +84,33 @@
     
     </a-entity>
 
-  -------------
+    </a-scene>
+
+  <script>
+  const anchor = document.querySelector("#anchor");
+  const modelos = [
+    document.querySelector("#modelo1"),
+    document.querySelector("#modelo2"),
+    document.querySelector("#modelo3")
+  ];
+
+  anchor.addEventListener("targetFound", () => {
+    // Ocultar todos
+    modelos.forEach(m => m.setAttribute("visible", "false"));
+
+    // Elegir aleatorio
+    const randomIndex = Math.floor(Math.random() * modelos.length);
+    modelos[randomIndex].setAttribute("visible", "true");
+  });
+
+  anchor.addEventListener("targetLost", () => {
+    modelos.forEach(m => m.setAttribute("visible", "false"));
+  });
+</script>
 
 </body>
 
 </html>
-
 
 
 
