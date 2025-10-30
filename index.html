@@ -36,7 +36,7 @@
   <button id="boton-foto">.</button>
 
 
-  <a-scene mindar-image="imageTargetSrc:src/traks/targets.mind;  missTolerance: 15" vr-mode-ui="enabled: false"
+  <a-scene mindar-image="imageTargetSrc:src/traks/targets2.mind;  missTolerance: 15" vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: false">
     <a-assets>
       <a-asset-item id="Animacion0" src="src/models/DEER.glb"></a-asset-item>
@@ -46,33 +46,39 @@
       <a-asset-item id="Animacion4" src="src/models/gears.glb"></a-asset-item>
       <a-asset-item id="Animacion5" src="src/models/Luffy.glb"></a-asset-item>
       <a-asset-item id="Animacion6" src="src/models/StarWars.glb"></a-asset-item>
+      <a-asset-item id="Animacion7" src="src/models/FNAF.glb"></a-asset-item>
+      <audio id="audioRA" src="src/sound.mp3"></audio>
+
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
- <!-- Anchor donde aparecen los modelos -->
-       <a-entity id="anchor" mindar-image-target="targetIndex: 0">
+    <!-- Anchor donde aparecen los modelos -->
+    <a-entity id="anchor" mindar-image-target="targetIndex: 0">
 
-    <!-- Los 3 modelos (por defecto ocultos) -->
-    <a-gltf-model id="modelo1" src="#Animacion0" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
-    <a-gltf-model id="modelo2" src="#Animacion1" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
-    <a-gltf-model id="modelo3" src="#Animacion2" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
-  </a-entity>
+      <!-- Los 3 modelos (por defecto ocultos) -->
+      <a-gltf-model id="modelo1" src="#Animacion0" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+      <a-gltf-model id="modelo2" src="#Animacion1" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+      <a-gltf-model id="modelo3" src="#Animacion2" visible="false" scale="0.5 0.5 0.5" animation-mixer></a-gltf-model>
+    </a-entity>
 
-        <a-entity mindar-image-target="targetIndex: 1">
+
+
+    <a-entity mindar-image-target="targetIndex: 1">
+      <!-- Modelo -->
       <a-gltf-model rotation="0 0 0" position="0 -3.8 0" scale="3 3 3" src="#Animacion3" animation-mixer>
       </a-gltf-model>
     </a-entity>
 
-    
-       <a-entity mindar-image-target="targetIndex: 2">
+    <a-entity mindar-image-target="targetIndex: 2">
       <a-gltf-model rotation="0 0 0" position="-0.5 -3.8 0" scale="3 3 3" src="#Animacion4" animation-mixer>
       </a-gltf-model>
     </a-entity>
 
-    <a-entity  mindar-image-target="targetIndex: 3">
-      <a-gltf-model id="modelo-temp" src="#Animacion5" rotation="0 0 0" position="0 0 0" scale="1 1 1"
-        animation-mixer> </a-gltf-model>
+
+    <a-entity mindar-image-target="targetIndex: 3">
+      <a-gltf-model id="modelo-temp" src="#Animacion5" rotation="0 0 0" position="0 0 0" scale="1 1 1" animation-mixer>
+      </a-gltf-model>
     </a-entity>
 
     <a-entity mindar-image-target="targetIndex: 4">
@@ -80,42 +86,54 @@
         animation-mixer> </a-gltf-model>
     </a-entity>
 
-
-
-    
+    <a-entity id="anchor3" mindar-image-target="targetIndex: 5">
+      <a-gltf-model scale="3 3 3" rotation="0 0 0" position="0 0 0" id="anchor1" src="#Animacion7" animation-mixer>
+      </a-gltf-model>
+      <a-sound id="audioRA" src="src/sound.mp3" autoplay="false" loop="false" position="0 1 0"></a-sound>
     </a-entity>
 
-    </a-scene>
+
+
+
+
+
+    </a-entity>
+
+  </a-scene>
 
   <script>
-  const anchor = document.querySelector("#anchor");
-  const modelos = [
-    document.querySelector("#modelo1"),
-    document.querySelector("#modelo2"),
-    document.querySelector("#modelo3")
-  ];
+    const anchor = document.querySelector("#anchor");
+    const modelos = [
+      document.querySelector("#modelo1"),
+      document.querySelector("#modelo2"),
+      document.querySelector("#modelo3")
+    ];
 
-  anchor.addEventListener("targetFound", () => {
-    // Ocultar todos
-    modelos.forEach(m => m.setAttribute("visible", "false"));
+    anchor.addEventListener("targetFound", () => {
+      // Ocultar todos
+      modelos.forEach(m => m.setAttribute("visible", "false"));
 
-    // Elegir aleatorio
-    const randomIndex = Math.floor(Math.random() * modelos.length);
-    modelos[randomIndex].setAttribute("visible", "true");
-  });
+      // Elegir aleatorio
+      const randomIndex = Math.floor(Math.random() * modelos.length);
+      modelos[randomIndex].setAttribute("visible", "true");
+    });
 
-  anchor.addEventListener("targetLost", () => {
-    modelos.forEach(m => m.setAttribute("visible", "false"));
-  });
-</script>
+    anchor.addEventListener("targetLost", () => {
+      modelos.forEach(m => m.setAttribute("visible", "false"));
+    });
+
+
+    const anchor3 = document.querySelector('#anchor3');
+    const audio = document.querySelector('#audioRA');
+
+    anchor3.addEventListener('targetFound', () => audio.play());
+    anchor3.addEventListener('targetLost', () => {
+      audio.pause();
+      audio.currentTime = 0; // reinicia al inicio
+    });
+
+  </script>
 
 </body>
 
 </html>
-
-
-
-
-
-
-
